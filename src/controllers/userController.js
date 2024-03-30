@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const postSignup = async (req, res) => {
   const { email, username, password } = req.body;
@@ -41,7 +42,7 @@ export const postSignup = async (req, res) => {
   });
   req.session.loggedIn = true;
   req.session.user = user;
-  return res.status(200).send(req.session.cookie);
+  return res.status(200).json("회원가입 완료.");
 };
 
 export const postSignin = async (req, res) => {
@@ -60,11 +61,10 @@ export const postSignin = async (req, res) => {
   }
   req.session.loggedIn = true;
   req.session.user = user;
-  return res.status(200).send(req.session.cookie);
+  return res.status(200).json("로그인 완료.");
 };
 
 export const logout = (req, res) => {
-  const sessionId = req.session.id;
   req.session.destroy();
   return res.redirect("http://localhost:3000");
 };

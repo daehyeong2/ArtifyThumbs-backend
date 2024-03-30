@@ -1,8 +1,10 @@
-export const getUser = (req, res) => {
+import User from "../models/User.js";
+
+export const getUser = async (req, res) => {
   const loggedIn = req.session.loggedIn;
   if (!loggedIn) {
     return res.status(200).json({ loggedIn: false });
   }
-  const user = req.session.user;
+  const user = await User.findById(req.session.user._id);
   return res.status(200).json({ loggedIn: true, user });
 };
