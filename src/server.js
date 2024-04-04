@@ -5,6 +5,7 @@ import apiRouter from "./routers/apiRouter.js";
 import cors from "cors";
 import MongoStore from "connect-mongo";
 import session from "express-session";
+import orderRouter from "./routers/orderRouter.js";
 
 const app = express();
 const logger = morgan("dev");
@@ -28,12 +29,13 @@ app.use(
     cookie: {
       sameSite: false,
       httpOnly: true,
-      maxAge: 60 * 60 * 24 * 30,
+      maxAge: 1000 * 60 * 60 * 24 * 30,
       secure: process.env.NODE_ENV === "production",
     },
   })
 );
 app.use("/users", userRouter);
 app.use("/api", apiRouter);
+app.use("/orders", orderRouter);
 
 export default app;

@@ -5,6 +5,11 @@ export const getUser = async (req, res) => {
   if (!loggedIn) {
     return res.status(200).json({ loggedIn: false });
   }
-  const user = await User.findById(req.session.user._id);
+  const user = await User.findById(req.session.user._id).populate({
+    path: "orders",
+    options: {
+      sort: { applyedAt: "desc" },
+    },
+  });
   return res.status(200).json({ loggedIn: true, user });
 };

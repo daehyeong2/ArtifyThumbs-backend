@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
+    unique: true,
     minlength: 4,
     maxlength: 12,
   },
@@ -17,7 +18,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    match: /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,16}$/,
+    minlength: 8,
   },
   role: {
     type: String,
@@ -27,12 +28,18 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default:
-      "https://cdn.discordapp.com/attachments/1185437332569075782/1223602682124697620/16b2dc09f85032eb.png?ex=661a73cc&is=6607fecc&hm=a71f50375a4af0b84cebfc58a108207e65c2e1c47b65b6a0a91cbb576dc06d2c&",
+      "https://cdn.discordapp.com/attachments/1185437332569075782/1223603691831951450/3.png?ex=661a74bd&is=6607ffbd&hm=7551385b8c0354a8d299012e343f94682da00e9815c7776702e484e88702e00c&",
   },
   createdAt: {
     type: Date,
     default: Date.now,
   },
+  orders: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "Order",
+    },
+  ],
 });
 
 userSchema.pre("save", async function () {
