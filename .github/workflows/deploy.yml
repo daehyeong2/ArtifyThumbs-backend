@@ -20,12 +20,3 @@ jobs:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
           project: daehyeong2010/artifythumbs
           stage: main
-          yaml: |
-            name: artifythumbs-backend
-            app: node@18
-            options:
-              ports: 4000
-            context:
-              git:
-                url: git@github.com:${{ github.repository }}.git
-                ref: ${{ github.ref }}
