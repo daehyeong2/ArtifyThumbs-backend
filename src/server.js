@@ -9,7 +9,7 @@ const app = express();
 const logger = morgan("dev");
 
 const corsOptions = {
-  origin: true,
+  origin: process.env.FRONTEND_URL,
   methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
   credentials: true,
 };
