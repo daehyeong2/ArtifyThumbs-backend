@@ -1,11 +1,9 @@
 import express from "express";
 import morgan from "morgan";
-import userRouter from "./routers/userRouter.js";
-import apiRouter from "./routers/apiRouter.js";
 import cors from "cors";
 import MongoStore from "connect-mongo";
 import session from "express-session";
-import orderRouter from "./routers/orderRouter.js";
+import rootRouter from "./routers/rootRouter.js";
 
 const app = express();
 const logger = morgan("dev");
@@ -18,7 +16,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(logger);
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(
   session({
@@ -34,8 +32,6 @@ app.use(
     },
   })
 );
-app.use("/users", userRouter);
-app.use("/api", apiRouter);
-app.use("/orders", orderRouter);
+app.use("/", rootRouter);
 
 export default app;

@@ -32,7 +32,7 @@ const orderSchema = new mongoose.Schema({
   },
   result: {
     type: String,
-    default: "",
+    default: "/img/preparing.jpeg",
   },
   drafts: [
     {

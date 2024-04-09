@@ -43,14 +43,36 @@ export const getApplication = async (req, res) => {
   }
   const {
     session: {
-      user: { _id },
+      user: { _id, role },
     },
     body: { id },
   } = req;
-  const order = await Order.findById(id);
-  if (order.orderer + "" === _id) {
+  const order = await Order.findById(id).populate("orderer");
+  if (!order) {
+    return res.status(404).json("없는 주문입니다.");
+  }
+  if (role === "admin" || order.orderer + "" === _id) {
     return res.status(200).json({ order });
   } else {
-    return res.status(400).json("실패");
+    return res.status(400).json("권한 없음.");
   }
+};
+
+export const getApplications = async (req, res) => {
+  const {
+    session: { loggedIn },
+  } = req;
+  if (!loggedIn) {
+    return res.status(400).json("로그인이 필요한 서비스입니다.");
+  }
+  const {
+    session: {
+      user: { role },
+    },
+  } = req;
+  if (role !== "admin") {
+    return res.status(400).json("권한이 없습니다.");
+  }
+  const orders = await Order.find().sort({ isComplete: 1, applyedAt: -1 });
+  return res.status(200).json(orders);
 };

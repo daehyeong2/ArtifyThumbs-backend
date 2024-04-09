@@ -66,5 +66,5 @@ export const postSignin = async (req, res) => {
 
 export const logout = (req, res) => {
   req.session.destroy();
-  return res.redirect("http://localhost:3000");
+  return res.status(200).json("로그아웃 완료.");
 };
