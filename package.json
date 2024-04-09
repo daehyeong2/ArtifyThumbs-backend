@@ -5,7 +5,7 @@
   "main": "src/init.js",
   "scripts": {
     "test": "",
-    "start": "node build/init.js",
+    "start": "node src/init.js",
     "dev": "nodemon src/init.js"
   },
   "repository": {
