@@ -1,0 +1,40 @@
+name: Deploy to cloudtype
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Connect deploy key
+        uses: cloudtype-github-actions/connect@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          ghtoken: ${{ secrets.GHP_TOKEN }}
+      - name: Deploy
+        uses: cloudtype-github-actions/deploy@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          project: daehyeong2010/artifythumbs
+          stage: main
+          yaml: |
+            name: artifythumbs-backend
+            app: node@18
+            options:
+              env:
+                - name: NODE_ENV
+                  value: production
+                - name: DB_URL
+                  value: mongodb://0.0.0.0:27017/ArtifyThumbs
+                - name: COOKIE_SECRET
+                  value: fnan2312_cdasmfksadf-asfkm@!s
+                - name: FRONTEND_URL
+                  value: https://artifythumbs.netlify.app
+              ports: 3000
+            context:
+              git:
+                url: git@github.com:${{ github.repository }}.git
+                ref: ${{ github.ref }}
