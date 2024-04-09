@@ -23,6 +23,17 @@ jobs:
           yaml: |
             name: artifythumbs-backend
             app: node@18
+            options:
+              env:
+                - name: NODE_ENV
+                  value: ${{ secrets.NODE_ENV }}
+                - name: DB_URL
+                  value: ${{ secrets.DB_URL }}
+                - name: COOKIE_SECRET
+                  value: ${{ secrets.COOKIE_SECRET }}
+                - name: FRONTEND_URL
+                  value: ${{ secrets.FRONTEND_URL }}
+              ports: 3000
             context:
               git:
                 url: git@github.com:${{ github.repository }}.git
