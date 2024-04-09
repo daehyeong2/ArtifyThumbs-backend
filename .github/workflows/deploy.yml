@@ -33,7 +33,7 @@ jobs:
                   value: ${{ secrets.COOKIE_SECRET }}
                 - name: FRONTEND_URL
                   value: ${{ secrets.FRONTEND_URL }}
-              ports: 3000
+              ports: 4000
             context:
               git:
                 url: git@github.com:${{ github.repository }}.git
