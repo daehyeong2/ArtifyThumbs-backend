@@ -27,8 +27,7 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default:
-      "https://cdn.discordapp.com/attachments/1185437332569075782/1223603691831951450/3.png?ex=661a74bd&is=6607ffbd&hm=7551385b8c0354a8d299012e343f94682da00e9815c7776702e484e88702e00c&",
+    default: "/img/user.jpeg",
   },
   createdAt: {
     type: Date,

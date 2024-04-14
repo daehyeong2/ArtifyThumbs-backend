@@ -1,4 +1,5 @@
 import Inquiry from "../models/Inquiry.js";
+import JWT from "jsonwebtoken";
 
 export const createInquiry = async (req, res) => {
   const { body } = req;
@@ -10,17 +11,8 @@ export const createInquiry = async (req, res) => {
   }
 };
 export const getAllInquiries = async (req, res) => {
-  const {
-    session: { loggedIn },
-  } = req;
-  if (!loggedIn) {
-    return res.status(400).json("로그인이 필요한 서비스입니다.");
-  }
-  const {
-    session: {
-      user: { role },
-    },
-  } = req;
+  const { token } = req;
+  const { role } = JWT.decode(token);
   if (role !== "admin") {
     return res.status(400).json("권한이 없습니다.");
   }
@@ -32,17 +24,10 @@ export const getAllInquiries = async (req, res) => {
 };
 export const getInquiry = async (req, res) => {
   const {
-    session: { loggedIn },
-  } = req;
-  if (!loggedIn) {
-    return res.status(400).json("로그인이 필요한 서비스입니다.");
-  }
-  const {
-    session: {
-      user: { role },
-    },
+    token,
     body: { inquiryId },
   } = req;
+  const { role } = JWT.decode(token);
   if (role !== "admin") {
     return res.status(400).json("권한이 없습니다.");
   }

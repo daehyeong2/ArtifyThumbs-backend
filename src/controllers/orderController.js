@@ -1,20 +1,14 @@
 import User from "../models/User.js";
 import Order from "../models/Order.js";
+import JWT from "jsonwebtoken";
 
 export const postApply = async (req, res) => {
   const {
-    session: { loggedIn },
-  } = req;
-  if (!loggedIn) {
-    return res.status(400).json("로그인이 필요한 서비스입니다.");
-  }
-  const {
-    session: {
-      user: { _id },
-    },
+    token,
     body: { plan, kind, title, content },
   } = req;
   try {
+    const { _id } = JWT.decode(token);
     const user = await User.findById(_id);
     const newOrder = await Order.create({
       orderer: user,
@@ -36,43 +30,41 @@ export const postApply = async (req, res) => {
 
 export const getApplication = async (req, res) => {
   const {
-    session: { loggedIn },
-  } = req;
-  if (!loggedIn) {
-    return res.status(400).json("로그인이 필요한 서비스입니다.");
-  }
-  const {
-    session: {
-      user: { _id, role },
-    },
+    token,
     body: { id },
   } = req;
+  const { _id, role } = JWT.decode(token);
   const order = await Order.findById(id).populate("orderer");
   if (!order) {
     return res.status(404).json("없는 주문입니다.");
   }
-  if (role === "admin" || order.orderer + "" === _id) {
+  if (role === "admin" || order.orderer._id + "" === _id) {
     return res.status(200).json({ order });
   } else {
-    return res.status(400).json("권한 없음.");
+    return res.sendStatus(403);
   }
 };
 
 export const getApplications = async (req, res) => {
-  const {
-    session: { loggedIn },
-  } = req;
-  if (!loggedIn) {
-    return res.status(400).json("로그인이 필요한 서비스입니다.");
-  }
-  const {
-    session: {
-      user: { role },
-    },
-  } = req;
+  const { token } = req;
+  const { role } = JWT.decode(token);
   if (role !== "admin") {
     return res.status(400).json("권한이 없습니다.");
   }
   const orders = await Order.find().sort({ isComplete: 1, applyedAt: -1 });
   return res.status(200).json(orders);
+};
+
+export const getMyApplications = async (req, res) => {
+  const { token } = req;
+  const { _id } = JWT.decode(token);
+  try {
+    const applications = await Order.find({ orderer: _id }).sort({
+      applyedAt: "desc",
+    });
+    return res.status(200).json(applications);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json(e);
+  }
 };
