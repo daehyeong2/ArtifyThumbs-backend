@@ -4,7 +4,9 @@ import cors from "cors";
 import rootRouter from "./routers/rootRouter.js";
 
 const app = express();
-const logger = morgan("dev");
+const logger = morgan(
+  process.env.NODE_ENV === "production" ? "combined" : "dev"
+);
 
 const corsOptions = {
   origin: process.env.FRONTEND_URL,
