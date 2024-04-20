@@ -82,7 +82,9 @@ orderSchema.pre("save", function (next) {
 });
 
 orderSchema.pre("save", function () {
-  this.tags = this.tags.map((tag) => tag_list[tag]);
+  if (this.isModified("tags")) {
+    this.tags = this.tags.map((tag) => tag_list[tag]);
+  }
 });
 
 const Order = mongoose.model("Order", orderSchema, "orders");
