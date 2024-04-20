@@ -9,7 +9,7 @@ import Order from "./models/Order.js";
 import JWT from "jsonwebtoken";
 
 const corsOptions = {
-  origin: process.env.FRONTEND_URL,
+  origin: "*",
   methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
   allowedHeaders: ["Authorization", "Content-Type"],
 };
@@ -21,7 +21,11 @@ const io = new Server(server, {
 });
 
 instrument(io, {
-  auth: false,
+  auth: {
+    username: process.env.SOCKET_USERNAME,
+    password: process.env.SOCKET_PASSWORD,
+  },
+  mode: process.env.NODE_ENV === "production" ? "production" : "development",
 });
 
 io.on("connection", (socket) => {

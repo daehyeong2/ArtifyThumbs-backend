@@ -33,6 +33,10 @@ jobs:
                   value: ${{ secrets.JWT_SECRET }}
                 - name: FRONTEND_URL
                   value: ${{ secrets.FRONTEND_URL }}
+                - name: SOCKET_USERNAME
+                  value: ${{ secrets.SOCKET_USERNAME }}
+                - name: SOCKET_PASSWORD
+                  value: ${{ secrets.SOCKET_PASSWORD }}
               ports: 4000
             context:
               git:
