@@ -7,10 +7,9 @@ import { Server } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 import Order from "./models/Order.js";
 import JWT from "jsonwebtoken";
-import bcrypt from "bcrypt";
 
 const corsOptions = {
-  origin: "*",
+  origin: [process.env.FRONTEND_URL, "https://admin.socket.io"],
   methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
   allowedHeaders: ["Authorization", "Content-Type"],
 };
