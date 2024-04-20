@@ -1,16 +1,12 @@
 import User from "../models/User.js";
 import Order from "../models/Order.js";
-import JWT from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET;
 
 export const postApply = async (req, res) => {
   const {
-    token,
+    token: { _id },
     body: { plan, kind, title, content },
   } = req;
   try {
-    const { _id } = JWT.verify(token, JWT_SECRET);
     const user = await User.findById(_id);
     const newOrder = await Order.create({
       orderer: user,
@@ -32,10 +28,9 @@ export const postApply = async (req, res) => {
 
 export const getApplication = async (req, res) => {
   const {
-    token,
+    token: { _id, role },
     body: { id },
   } = req;
-  const { _id, role } = JWT.verify(token, JWT_SECRET);
   const order = await Order.findById(id).populate("orderer");
   if (!order) {
     return res.status(404).json("없는 주문입니다.");
@@ -48,8 +43,7 @@ export const getApplication = async (req, res) => {
 };
 
 export const getApplications = async (req, res) => {
-  const { token } = req;
-  const { role } = JWT.verify(token, JWT_SECRET);
+  const { role } = req.token;
   if (role !== "admin") {
     return res.status(400).json("권한이 없습니다.");
   }
@@ -58,8 +52,7 @@ export const getApplications = async (req, res) => {
 };
 
 export const getMyApplications = async (req, res) => {
-  const { token } = req;
-  const { _id } = JWT.verify(token, JWT_SECRET);
+  const { _id } = req.token;
   try {
     const applications = await Order.find({ orderer: _id }).sort({
       applyedAt: "desc",

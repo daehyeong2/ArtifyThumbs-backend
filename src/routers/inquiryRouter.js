@@ -4,6 +4,7 @@ import {
   getAllInquiries,
   getInquiry,
 } from "../controllers/inquiryController.js";
+import jwt from "jsonwebtoken";
 
 const inquiryRouter = express.Router();
 
@@ -19,7 +20,12 @@ function verifyToken(req, res, next) {
     // 'Bearer <token>' 형태로 온다고 가정
     const bearerToken = bearerHeader.split(" ")[1];
     // 토큰 설정
-    req.token = bearerToken;
+    try {
+      const decoded = jwt.verify(bearerToken, process.env.JWT_SECRET);
+      req.token = decoded;
+    } catch {
+      return res.status(403).json("토큰 위조");
+    }
     next();
   } else {
     // 인증 실패
