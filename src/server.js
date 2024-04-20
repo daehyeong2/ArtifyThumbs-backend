@@ -9,7 +9,7 @@ import Order from "./models/Order.js";
 import JWT from "jsonwebtoken";
 
 const corsOptions = {
-  origin: [process.env.FRONTEND_URL, "https://admin.socket.io"],
+  origin: process.env.FRONTEND_URL,
   methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
   allowedHeaders: ["Authorization", "Content-Type"],
 };
