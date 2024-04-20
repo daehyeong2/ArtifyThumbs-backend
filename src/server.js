@@ -12,7 +12,6 @@ const corsOptions = {
   origin: [process.env.FRONTEND_URL, "https://admin.socket.io"],
   methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
   allowedHeaders: ["Authorization", "Content-Type"],
-  credentials: true,
 };
 
 const app = express();
