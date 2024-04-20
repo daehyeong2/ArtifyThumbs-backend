@@ -1,6 +1,8 @@
 import Inquiry from "../models/Inquiry.js";
 import JWT from "jsonwebtoken";
 
+const JWT_SECRET = process.env.JWT_SECRET;
+
 export const createInquiry = async (req, res) => {
   const { body } = req;
   try {
@@ -12,7 +14,7 @@ export const createInquiry = async (req, res) => {
 };
 export const getAllInquiries = async (req, res) => {
   const { token } = req;
-  const { role } = JWT.decode(token);
+  const { role } = JWT.verify(token, JWT_SECRET);
   if (role !== "admin") {
     return res.status(400).json("권한이 없습니다.");
   }
@@ -27,7 +29,7 @@ export const getInquiry = async (req, res) => {
     token,
     body: { inquiryId },
   } = req;
-  const { role } = JWT.decode(token);
+  const { role } = JWT.verify(token, JWT_SECRET);
   if (role !== "admin") {
     return res.status(400).json("권한이 없습니다.");
   }

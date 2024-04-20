@@ -6,6 +6,7 @@ import http from "http";
 import { Server } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 import Order from "./models/Order.js";
+import JWT from "jsonwebtoken";
 
 const corsOptions = {
   origin: [process.env.FRONTEND_URL, "https://admin.socket.io"],
@@ -25,24 +26,28 @@ instrument(io, {
 });
 
 io.on("connection", (socket) => {
-  console.log("A client connected");
-
   socket.on("chat_message", async (data, room) => {
-    socket.to(room).emit("chat_message", data);
     try {
       if (!room) {
         throw new Error("룸이 지정되지 않았습니다.");
       }
-
+      const token = data.jwt;
+      const { _id, role } = JWT.verify(token, process.env.JWT_SECRET);
       const order = await Order.findById(room);
       if (!order) {
         throw new Error("존재하지 않는 주문입니다.");
+      }
+      if (role !== "admin" && _id !== order.orderer) {
+        throw new Error("권한이 없습니다.");
+      } else if (role !== "admin" && data.isMe === false) {
+        throw new Error("권한이 없습니다.");
       }
       order.chats.push({
         message: data.message,
         isMe: data.isMe,
       });
       await order.save();
+      socket.to(room).emit("chat_message", data);
     } catch (e) {
       console.error("chat_message 에러:", e);
       socket.emit("error", e.message);
@@ -50,9 +55,6 @@ io.on("connection", (socket) => {
   });
   socket.on("chat_room", (roomName) => {
     socket.join(roomName);
-  });
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
   });
 });
 
