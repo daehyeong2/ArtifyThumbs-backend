@@ -18,7 +18,7 @@ function verifyToken(req, res, next) {
       const decoded = jwt.verify(bearerToken, process.env.JWT_SECRET);
       req.token = decoded;
     } catch {
-      return res.sendStatus(200);
+      return res.sendStatus(403);
     }
     next();
   } else {
