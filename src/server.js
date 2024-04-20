@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 import Order from "./models/Order.js";
 import JWT from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 const corsOptions = {
   origin: "*",
@@ -22,8 +23,9 @@ const io = new Server(server, {
 
 instrument(io, {
   auth: {
+    type: "basic",
     username: process.env.SOCKET_USERNAME,
-    password: process.env.SOCKET_PASSWORD,
+    password: "$2a$12$YbGtFU0vMBCCQIJL7gww4.kLzDY7/QiAjH6BDfAHK24sunXLaBCRi",
   },
   mode: process.env.NODE_ENV === "production" ? "production" : "development",
 });
