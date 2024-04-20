@@ -18,12 +18,12 @@ function verifyToken(req, res, next) {
       const decoded = jwt.verify(bearerToken, process.env.JWT_SECRET);
       req.token = decoded;
     } catch {
-      return res.sendStatus(403);
+      return res.sendStatus(400);
     }
     next();
   } else {
     // 인증 실패
-    res.sendStatus(403); // Forbidden
+    res.sendStatus(400); // Forbidden
   }
 }
 
