@@ -41,7 +41,7 @@ io.on("connection", (socket) => {
       if (!order) {
         throw new Error("존재하지 않는 주문입니다.");
       }
-      if (role !== "admin" && _id !== order.orderer) {
+      if (role !== "admin" && _id !== order.orderer + "") {
         throw new Error("권한이 없습니다.");
       } else if (role !== "admin" && data.isMe === false) {
         throw new Error("권한이 없습니다.");
