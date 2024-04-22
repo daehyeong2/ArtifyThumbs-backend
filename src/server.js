@@ -33,7 +33,7 @@ io.on("connection", (socket) => {
   socket.on("chat_message", async (data, room) => {
     try {
       if (!room) {
-        throw new Error("룸이 지정되지 않았습니다.");
+        throw new Error("방이 지정되지 않았습니다.");
       }
       const token = data.jwt;
       const { _id, role } = JWT.verify(token, process.env.JWT_SECRET);
