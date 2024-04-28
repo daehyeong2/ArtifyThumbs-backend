@@ -5,9 +5,12 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export const postSignup = async (req, res) => {
-  const { email, username, password } = req.body;
+  const { email, username, password, passwordConfirmation } = req.body;
   if (!email && !username && !password) {
     return res.status(400).json({ message: "모든 필드를 입력해주세요." });
+  }
+  if (password !== passwordConfirmation) {
+    return res.status(400).json({ message: "비밀번호가 일치하지 않습니다." });
   }
   const lowerEmail = email.toLowerCase();
   const lowerUsername = username.toLowerCase();
