@@ -29,14 +29,12 @@ jobs:
               env:
                 - name: NODE_ENV
                   value: ${{ secrets.NODE_ENV }}
-                - name: DB_URL
-                  value: ${{ secrets.DB_URL }}
-                - name: JWT_SECRET
-                  value: ${{ secrets.JWT_SECRET }}
                 - name: FRONTEND_URL
                   value: ${{ secrets.FRONTEND_URL }}
                 - name: SOCKET_USERNAME
                   value: ${{ secrets.SOCKET_USERNAME }}
+                - name: FIREBASE_CREDENTIALS
+                  value: ${{ secrets.FIREBASE_CREDENTIALS }}
               ports: 4000
             context:
               git:
