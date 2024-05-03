@@ -31,10 +31,10 @@ jobs:
                   value: ${{ secrets.NODE_ENV }}
                 - name: FRONTEND_URL
                   value: ${{ secrets.FRONTEND_URL }}
-                - name: SOCKET_USERNAME
-                  value: ${{ secrets.SOCKET_USERNAME }}
                 - name: FIREBASE_CREDENTIALS
                   value: ${{ secrets.FIREBASE_CREDENTIALS }}
+                - name: SOCKET_USERNAME
+                  value: ${{ secrets.SOCKET_USERNAME }}
               ports: 4000
             context:
               git:
