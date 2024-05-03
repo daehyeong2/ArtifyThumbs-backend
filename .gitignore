@@ -12,6 +12,7 @@
 /build
 
 # misc
+/.cloudtype
 .DS_Store
 .env.local
 .env
