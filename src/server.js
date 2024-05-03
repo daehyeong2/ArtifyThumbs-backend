@@ -74,7 +74,7 @@ io.on("connection", (socket) => {
             timestamp: new Date().toISOString(),
             isMe: data.isMe,
           };
-          console.log(newMessages);
+          console.log("새로운 메시지 객체", newMessages);
           if (!(messageObject in newMessages[room])) {
             newMessages[room].push(messageObject);
           }
