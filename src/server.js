@@ -64,6 +64,16 @@ io.on("connection", (socket) => {
           if (!room) {
             throw new Error("방이 지정되지 않았습니다.");
           }
+          if (!order) {
+            const _orderRef = db.doc(`orders/${room}`);
+            const orderDoc = await _orderRef.get();
+            if (!orderDoc.exists) {
+              throw new Error("존재하지 않는 주문입니다.");
+            } else {
+              order = orderDoc.data();
+              orderRef = _orderRef;
+            }
+          }
           if (!user.isAdmin && user.userId !== order.orderer) {
             throw new Error("권한이 없습니다.");
           } else if (!user.isAdmin && data.isMe === false) {
@@ -73,7 +83,11 @@ io.on("connection", (socket) => {
             message: data.message,
             timestamp: new Date().toISOString(),
             isMe: data.isMe,
+            imageUrl: data.imageUrl ?? "",
           };
+          if (!newMessages[room]) {
+            newMessages[room] = [];
+          }
           if (!(messageObject in newMessages[room])) {
             newMessages[room].push(messageObject);
           }
@@ -104,10 +118,16 @@ io.on("connection", (socket) => {
       });
       socket.on("disconnecting", async () => {
         if (newMessages[room]?.length > 0) {
-          await orderRef?.update({
-            chats: admin.firestore.FieldValue.arrayUnion(...newMessages[room]),
-          });
-          newMessages[room] = [];
+          const _orderRef = db.doc(`orders/${room}`);
+          const orderDoc = await _orderRef.get();
+          if (orderDoc.exists) {
+            await orderRef?.update({
+              chats: admin.firestore.FieldValue.arrayUnion(
+                ...newMessages[room]
+              ),
+            });
+            newMessages[room] = [];
+          }
         }
       });
     })
