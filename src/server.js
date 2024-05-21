@@ -2,6 +2,7 @@ import http from "http";
 import { Server } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 import admin from "firebase-admin";
+import _ from "lodash";
 
 const stringServiceAccount = process.env.FIREBASE_CREDENTIALS;
 
@@ -81,14 +82,17 @@ io.on("connection", (socket) => {
           }
           const messageObject = {
             message: data.message,
-            timestamp: new Date().toISOString(),
+            timestamp: data.timestamp,
             isMe: data.isMe,
             imageUrl: data.imageUrl ?? "",
           };
           if (!newMessages[room]) {
             newMessages[room] = [];
           }
-          if (!(messageObject in newMessages[room])) {
+          if (
+            newMessages[room].filter((item) => _.isEqual(item, messageObject))
+              .length === 0
+          ) {
             newMessages[room].push(messageObject);
           }
           socket.to(room).emit("chat_message", messageObject);
@@ -129,6 +133,27 @@ io.on("connection", (socket) => {
             newMessages[room] = [];
           }
         }
+      });
+      socket.on("delete_message", async (chat) => {
+        if (!user.isAdmin && !chat.isMe) throw new Error("권한이 없습니다.");
+        if (
+          newMessages[room] &&
+          newMessages[room].filter((item) => _.isEqual(item, chat)).length === 1
+        ) {
+          newMessages[room] = newMessages[room].filter(
+            (item) => !_.isEqual(item, chat)
+          );
+        } else {
+          try {
+            const newOrder = await orderRef?.update({
+              chats: order.chats.filter((item) => !_.isEqual(item, chat)),
+            });
+            order = newOrder;
+          } catch (e) {
+            throw new Error(`Delete Error: ${e}`);
+          }
+        }
+        socket.to(room).emit("delete_message", chat);
       });
     })
     .catch((e) => {
