@@ -80,10 +80,24 @@ io.on("connection", (socket) => {
           } else if (!user.isAdmin && data.isMe === false) {
             throw new Error("권한이 없습니다.");
           }
+          const roomSockets = io.sockets.adapter.rooms.get(room);
+          const isClient = socket.role === "client";
+          let isRead = false;
+
+          if (roomSockets) {
+            for (let socketId of roomSockets) {
+              const clientSocket = io.sockets.sockets.get(socketId);
+              if (clientSocket.role === (isClient ? "admin" : "client")) {
+                isRead = true;
+                break;
+              }
+            }
+          }
           const messageObject = {
             message: data.message,
             timestamp: data.timestamp,
             isMe: data.isMe,
+            isRead,
             imageUrl: data.imageUrl ?? "",
           };
           if (!newMessages[room]) {
@@ -101,6 +115,9 @@ io.on("connection", (socket) => {
           socket.emit("error", e.message);
         }
       });
+      socket.on("role", (role) => {
+        socket["role"] = role;
+      });
       socket.on("chat_room", async (roomName) => {
         const _orderRef = db.doc(`orders/${roomName}`);
         const orderDoc = await _orderRef.get();
@@ -115,10 +132,25 @@ io.on("connection", (socket) => {
         if (!newMessages[roomName]) {
           newMessages[roomName] = [];
         } else if (newMessages[roomName].length > 0) {
+          const roomSockets = io.sockets.adapter.rooms.get(roomName);
+          const isClient = socket.role === "client";
+          let isRead = false;
+
+          if (roomSockets) {
+            for (let socketId of roomSockets) {
+              const clientSocket = io.sockets.sockets.get(socketId);
+              if (clientSocket.role === (isClient ? "admin" : "client")) {
+                isRead = true;
+                break;
+              }
+            }
+          }
+          newMessages[roomName][newMessages[roomName].length - 1].isRead =
+            isRead;
           socket.emit("chats", newMessages[roomName]);
         }
         room = roomName;
-        socket.join(roomName);
+        await socket.join(roomName);
       });
       socket.on("disconnecting", async () => {
         if (newMessages[room]?.length > 0) {
@@ -157,7 +189,7 @@ io.on("connection", (socket) => {
       });
     })
     .catch((e) => {
-      console.log("인증 실패:", e);
+      console.error("인증 실패:", e);
       socket.disconnect();
     });
 });
