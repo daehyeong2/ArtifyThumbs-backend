@@ -1,3 +1,3 @@
 # ArtifyThumbs (Backend)
 
-node.js + express + mongoose
+node.js + socket.io + firebase
